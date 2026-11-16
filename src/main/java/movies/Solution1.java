@@ -224,7 +224,7 @@ public class Solution1 implements MovieCatalogue {
             return Double.compare(x.average(), y.average());
         }
 
-        return Integer.compare(x.movie.id(), y.movie.id());
+        return Integer.compare(y.movie.id(), x.movie.id());
     }
 
     private int findFirst(long key)

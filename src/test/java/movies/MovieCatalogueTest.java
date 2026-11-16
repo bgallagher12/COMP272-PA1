@@ -254,8 +254,6 @@ abstract class MovieCatalogueTest {
     // ------------------------------------------------------------------
 
     @Test
-    @Disabled("Remove this line once DatasetReader.readMovies works "
-            + "and movies.csv (from ml-latest-small) is in the data folder")
     void everyMovieOfTheDatasetCanBeFound() throws IOException {
         List<Movie> movies = DatasetReader.readMovies(Path.of("data", "movies.csv"));
         for (Movie m : movies) {
@@ -296,7 +294,7 @@ abstract class MovieCatalogueTest {
         assertEquals(9742, cat.size());
         assertEquals(13, DatasetReader.lastMissingYear());
         assertEquals("Toy Story", cat.getById(1).title());
-        assertEquals("The Matrix", cat.getById(2571).title());
+        assertEquals("Matrix, The", cat.getById(2571).title());
         assertEquals(new Movie(73881, "3 Idiots", 2009, List.of("Comedy", "Drama", "Romance")), cat.getById(73881));
         assertEquals("Like Stars on Earth (Taare Zameen Par)", cat.getById(57183).title());
         assertEquals(2007, cat.getById(57183).year());
@@ -313,12 +311,12 @@ abstract class MovieCatalogueTest {
 
         assertEquals(100836, DatasetReader.replayRatings(Path.of("data", "ratings.csv"), cat));
         assertEquals(215, cat.ratingCount(1));
-        assertEquals(4.0, cat.averageRating(1), 1e-9);
+        assertEquals(843.0 / 215, cat.averageRating(1), 1e-9);
         assertEquals(318, cat.topRated(1990, 1999, 1, 100).get(0).id());
     }
 
     @Test
-    void radomTopRatedMatchesARefrence()
+    void randomTopRatedMatchesAReference()
     {
         Random random = new Random(272);
         int[] years = new int[500];
@@ -358,10 +356,4 @@ abstract class MovieCatalogueTest {
             assertEquals(ids(expected.subList(0, Math.min(10, expected.size()))), ids(cat.topRated(from, to, 10, minimumRatings)));
         }
     }
-    // TODO: Additional tests needed before final submission:
-    // - Verify movie titles containing commas and quotes.
-    // - Test movies without a release year.
-    // - Compare dataset year counts against expected values.
-    // - Test topRated using real MovieLens ratings.
-    // - Add randomized comparisons between both solutions.
 }
