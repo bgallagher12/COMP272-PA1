@@ -268,16 +268,20 @@ abstract class MovieCatalogueTest {
         assertEquals(movies.size(), cat.moviesInYears(0, 3000).size());
     }
 
-    // ------------------------------------------------------------------
-    // TODO: add your own tests. At least:
-    //  - Tests whose expected values YOU read from the dataset. For example: open
-    //    movies.csv, check that getById(1) has the title, year and genres of the first
-    //    line; count by hand (or with a spreadsheet) the movies of one year and compare
-    //    with moviesInYears.
-    //  - Titles that contain commas and quotes, and titles without a year.
-    //  - topRated on the real ratings of ml-latest-small, compared with a spreadsheet.
-    //  - A random comparison like the one above that also checks topRated.
-    //  - Any special case of YOUR implementation (e.g. many movies with the same year,
-    //    resizing, rebalancing).
-    // ------------------------------------------------------------------
+    @Test
+    void updatingMovieYearPreservesRatingsAndChangesYearIndex() {
+        Movie original = new Movie(100, "Test Movie", 2000, List.of());
+        cat.insertMovie(original);
+
+        cat.addRating(100, 4.0);
+        cat.addRating(100, 5.0);
+
+        Movie updated = new Movie(100, "Updated Movie", 2005, List.of());
+        cat.insertMovie(updated);
+
+        assertEquals(2, cat.ratingCount(100));
+        assertEquals(4.5, cat.averageRating(100), 1e-9);
+        assertTrue(cat.moviesInYears(2000, 2000).isEmpty());
+        assertEquals(List.of(updated), cat.moviesInYears(2005, 2005));
+    }
 }
