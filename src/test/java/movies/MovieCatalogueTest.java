@@ -284,6 +284,80 @@ abstract class MovieCatalogueTest {
         assertTrue(cat.moviesInYears(2000, 2000).isEmpty());
         assertEquals(List.of(updated), cat.moviesInYears(2005, 2005));
     }
+
+    @Test 
+    void datasetMoviesAreReadCorrectly() throws IOException
+    {
+        for(Movie movie : DatasetReader.readMovies(Path.of("data", "movies.csv")))
+        {
+            cat.insertMovie(movie);
+        }
+
+        assertEquals(9742, cat.size());
+        assertEquals(13, DatasetReader.lastMissingYear());
+        assertEquals("Toy Story", cat.getById(1).title());
+        assertEquals("The Matrix", cat.getById(2571).title());
+        assertEquals(new Movie(73881, "3 Idiots", 2009, List.of("Comedy", "Drama", "Romance")), cat.getById(73881));
+        assertEquals("Like Stars on Earth (Taare Zameen Par)", cat.getById(57183).title());
+        assertEquals(2007, cat.getById(57183).year());
+        assertEquals(1931, cat.moviesInYears(2010, 2019).size());
+    }
+
+    @Test 
+    void datasetRatingsAreReadCorrectly() throws IOException
+    {
+        for(Movie movie : DatasetReader.readMovies(Path.of("data", "movies.csv")))
+        {
+            cat.insertMovie(movie);
+        }
+
+        assertEquals(100836, DatasetReader.replayRatings(Path.of("data", "ratings.csv"), cat));
+        assertEquals(215, cat.ratingCount(1));
+        assertEquals(4.0, cat.averageRating(1), 1e-9);
+        assertEquals(318, cat.topRated(1990, 1999, 1, 100).get(0).id());
+    }
+
+    @Test
+    void radomTopRatedMatchesARefrence()
+    {
+        Random random = new Random(272);
+        int[] years = new int[500];
+        int[] ratingnumber = new int[500];
+        double[] ratingtotal = new double[500];
+
+        for(int id = 0; id < 500; id++)
+        {
+            years[id] = 1900 + random.nextInt(30);
+            cat.insertMovie(movie(id, "Movie", years[id]));
+        }
+        for(int i = 0; i < 5000; i++)
+        {
+            int id = random.nextInt(500);
+            double rating = 0.5 * (1 + random.nextInt(10));
+            cat.addRating(id, rating);
+            ratingnumber[id]++;
+            ratingtotal[id] += rating;
+        }
+        for(int j = 0; j < 200; j++)
+        {
+            int from = 1900 + random.nextInt(30);
+            int to = from + random.nextInt(10);
+            int minimumRatings = random.nextInt(15);
+            List<Movie> expected = new ArrayList<>();
+
+            for(int id = 0; id < 500; id++)
+            {
+                if(years[id] >= from && years[id] <= to && ratingnumber[id] >= minimumRatings)
+                {
+                    expected.add(cat.getById(id));
+                }
+            }
+
+            expected.sort(Comparator.comparingDouble((Movie movie) -> - ratingtotal[movie.id()]/ratingnumber[movie.id()])
+            .thenComparingInt(Movie::id));
+            assertEquals(ids(expected.subList(0, Math.min(10, expected.size()))), ids(cat.topRated(from, to, 10, minimumRatings)));
+        }
+    }
     // TODO: Additional tests needed before final submission:
     // - Verify movie titles containing commas and quotes.
     // - Test movies without a release year.
