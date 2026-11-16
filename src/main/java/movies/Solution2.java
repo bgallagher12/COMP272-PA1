@@ -7,22 +7,36 @@ import java.util.Comparator;
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 
+
 /**
  * Solution 2 for the movie catalogue.
  *
- * <p>TODO: Replace this comment with a short description of your solution:
- * <ul>
- *   <li>the data structure(s) used (e.g. "a Red-Black tree by ID, plus a sorted array list by year");</li>
- *   <li>where the code comes from: written by your team, adapted from course code,
- *       or a library class (e.g. java.util.TreeMap). Cite the source;</li>
- *   <li>the expected time complexity of each method below.</li>
- * </ul>
- * The full explanation of the implementation and of its expected performance
- * goes in your report.
+ * Uses a HashMap to store movies by their ID and a TreeMap
+ * to store movies in order by release year and ID.
  *
- * <p>You may rename this class to something more descriptive (e.g. TreeCatalogue).
- * If you do, also rename it in Solution2Test.
+ * The HashMap provides fast movie lookups, while the TreeMap
+ * supports efficient searches across a range of years.
+ * A PriorityQueue is used to find the top k rated movies.
+ *
+ * Data structures are from the Java Collections Framework
+ * (java.util.HashMap, java.util.TreeMap, java.util.PriorityQueue).
+ * The implementation was written by our team.
+ *
+ * Expected time complexities (n = total movies,
+ * m = movies in the requested year range):
+ *
+ * insertMovie:   O(log n) average/expected
+ * getById:       O(1) average
+ * addRating:     O(1) average
+ * ratingCount:   O(1) average
+ * averageRating: O(1) average
+ * moviesInYears: O(log n + m)
+ * topRated:      O(log n + m log k + k^2)
+ * size:          O(1)
+ *
+ * HashMap operations have O(n) worst-case bounds.
  */
+
 public class Solution2 implements MovieCatalogue {
 
     private static class MovieData {

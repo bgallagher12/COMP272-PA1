@@ -284,4 +284,10 @@ abstract class MovieCatalogueTest {
         assertTrue(cat.moviesInYears(2000, 2000).isEmpty());
         assertEquals(List.of(updated), cat.moviesInYears(2005, 2005));
     }
+    // TODO: Additional tests needed before final submission:
+    // - Verify movie titles containing commas and quotes.
+    // - Test movies without a release year.
+    // - Compare dataset year counts against expected values.
+    // - Test topRated using real MovieLens ratings.
+    // - Add randomized comparisons between both solutions.
 }
