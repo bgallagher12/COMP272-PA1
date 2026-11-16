@@ -258,12 +258,12 @@ public class Solution1 implements MovieCatalogue {
     {
         int position = findFirst(data.key());
 
-        this.byYear.add(position, data);
-        
         if(COUNTERS)
         {
             this.shifts += this.byYear.size() - position;
         }
+
+        this.byYear.add(position, data);
     }
 
     private void removeFromList(MovieData data)
