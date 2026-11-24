@@ -39,6 +39,11 @@ import java.util.PriorityQueue;
 
 public class Solution2 implements MovieCatalogue {
 
+    public static final boolean COUNTERS = true;
+
+    private long treeComparisons;
+    private long heapOperations;
+
     private static class MovieData {
         Movie movie;
         int ratingCount;
@@ -60,10 +65,19 @@ public class Solution2 implements MovieCatalogue {
     public Solution2() {
         moviesById = new HashMap<>();
 
-        moviesByYear = new TreeMap<>(
-            Comparator.comparingInt(YearKey::year)
-                      .thenComparingInt(YearKey::id)
-        );
+        moviesByYear = new TreeMap<>((a, b) -> {
+            if (COUNTERS) {
+                treeComparisons++;
+            }
+
+            int comparison = Integer.compare(a.year(), b.year());
+
+            if (comparison != 0) {
+                return comparison;
+            }
+
+            return Integer.compare(a.id(), b.id());
+        });
     }
 
 
@@ -177,16 +191,30 @@ public class Solution2 implements MovieCatalogue {
                 }
                 if (topMovies.size() < k) {
                     topMovies.offer(data);
+
+                    if (COUNTERS) {
+                        heapOperations++;
+                    }
                 }
                 else {
                     if (worstFirst.compare(data, topMovies.peek()) > 0) {
                         topMovies.poll();
+
+                        if (COUNTERS) {
+                            heapOperations++;
+                        }
+
                         topMovies.offer(data);
+
                     }
                 }       
             }   
             while (!topMovies.isEmpty()) {
                 results.add(0, topMovies.poll().movie);
+
+                if (COUNTERS) {
+                    heapOperations++;
+                }
             }
 
             return results;
@@ -197,6 +225,19 @@ public class Solution2 implements MovieCatalogue {
     @Override
     public int size() {
         return moviesById.size();
+    }
+
+    public long getTreeComparisons() {
+        return treeComparisons;
+    }
+
+    public long getHeapOperations() {
+        return heapOperations;
+    }
+
+    public void resetCounters() {
+        treeComparisons = 0;
+        heapOperations = 0;
     }
 
 }

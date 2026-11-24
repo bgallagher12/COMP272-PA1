@@ -40,6 +40,7 @@ public class Solution1 implements MovieCatalogue {
     private long searchSteps;
     private long shifts;
     private long heapOperations;
+    private long heapRemovals;
 
     private final HashMap<Integer, MovieData> byId;
     private final ArrayList<MovieData> byYear;
@@ -171,19 +172,30 @@ public class Solution1 implements MovieCatalogue {
             {
                 heap.add(data);
 
-                if(heap.size() > k)
-                {
-                    heap.poll();
-                }
                 if(COUNTERS)
                 {
                     this.heapOperations++;
+                }
+
+                if(heap.size() > k)
+                {
+                    heap.poll();
+
+                    if(COUNTERS)
+                    {
+                        this.heapRemovals++;
+                    }
                 }
             }
         }
         while(!heap.isEmpty())
         {
             result.add(0, heap.poll().movie);
+
+            if(COUNTERS)
+            {
+                this.heapRemovals++;
+            }
         }
 
         return result;
@@ -291,6 +303,11 @@ public class Solution1 implements MovieCatalogue {
     public long getHeapOperations()
     {
         return this.heapOperations;
+    }
+
+    public long getTotalHeapOperations()
+    {
+        return this.heapOperations + this.heapRemovals;
     }
 
     public void resetCounters()
