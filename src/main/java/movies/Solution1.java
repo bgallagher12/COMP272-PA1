@@ -315,6 +315,8 @@ public class Solution1 implements MovieCatalogue {
         this.searchSteps = 0;
         this.shifts = 0;
         this.heapOperations = 0;
+        this.heapRemovals = 0;
+
     }
 }
 
